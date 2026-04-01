@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>EduTrack Pro | Smart Student Management</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(145deg, #e0eafc 0%, #cfdef3 100%);
+      padding: 2rem 1.5rem;
+      position: relative;
+    }
+
+    /* animated background grain */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: radial-gradient(rgba(0, 0, 0, 0.02) 2px, transparent 2px);
+      background-size: 32px 32px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* main container */
+    .dashboard {
+      max-width: 1400px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* header section with modern glass effect */
+    .hero {
+      background: rgba(255, 255, 255, 0.4);
+      backdrop-filter: blur(12px);
+      border-radius: 3rem;
+      padding: 1.8rem 2rem;
+      margin-bottom: 2.5rem;
+      box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(255,255,255,0.5) inset;
+      border: 1px solid rgba(255,255,255,0.6);
+      transition: all 0.2s ease;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #1A2A3F, #2C3E66);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      letter-spacing: -0.3px;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    h1 span {
+      font-size: 2.2rem;
+    }
+
+    .subhead {
+      color: #2c3e50;
+      margin-top: 8px;
+      font-weight: 500;
+      font-size: 0.95rem;
+      opacity: 0.75;
+    }
+
+    /* card layout */
+    .card-panel {
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(8px);
+      border-radius: 2rem;
+      padding: 1.8rem;
+      box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      transition: transform 0.2s, box-shadow 0.2s;
+      margin-bottom: 2rem;
+    }
+
+    /* search bar area */
+    .search-section {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 0;
+    }
+
+    .search-wrapper {
+      flex: 2;
+      min-width: 220px;
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 14px 20px 14px 48px;
+      border: none;
+      background: rgba(255,255,255,0.9);
+      border-radius: 60px;
+      font-size: 1rem;
+      font-weight: 500;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02), inset 0 1px 0 rgba(0,0,0,0.02);
+      transition: all 0.2s;
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .search-input:focus {
+      outline: none;
+      background: white;
+      box-shadow: 0 10px 20px -8px rgba(0, 0, 0, 0.15);
+      border-color: #4f7df3;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 12px 28px;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      background: white;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(105deg, #2c3e66, #1e2f4b);
+      color: white;
+      box-shadow: 0 8px 18px -6px #1e2f4b60;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      background: linear-gradient(105deg, #1f3457, #18273f);
+      box-shadow: 0 14px 22px -10px #1e2f4baa;
+    }
+
+    .btn-outline {
+      background: rgba(255,255,240,0.85);
+      border: 1px solid #cbd5e1;
+      color: #1e293b;
+    }
+
+    .btn-outline:hover {
+      background: white;
+      border-color: #4f7df3;
+      transform: translateY(-1px);
+    }
+
+    /* form styling - modern grid with dropdowns */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.2rem;
+      align-items: end;
+    }
+
+    .input-field {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .input-field label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #2c3e66;
+      margin-bottom: 6px;
+      margin-left: 12px;
+    }
+
+    .modern-input, .modern-select {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 40px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      background: white;
+      font-size: 0.9rem;
+      transition: 0.2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+      cursor: pointer;
+    }
+
+    .modern-select {
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232c3e66' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      background-size: 16px;
+    }
+
+    .modern-input:focus, .modern-select:focus {
+      border-color: #4f7df3;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(79, 125, 243, 0.2);
+    }
+
+    .btn-save {
+      background: linear-gradient(120deg, #1f8a4c, #0e6b3a);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 40px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      transition: 0.2s;
+      margin-top: 22px;
+      box-shadow: 0 6px 14px rgba(15, 107, 58, 0.25);
+      width: 100%;
+      font-size: 0.95rem;
+    }
+
+    .btn-save:hover {
+      transform: scale(0.98);
+      background: linear-gradient(120deg, #197a43, #0c5a30);
+      box-shadow: 0 4px 10px rgba(15, 107, 58, 0.3);
+    }
+
+    /* student cards grid */
+    .student-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1.4rem;
+      margin-top: 0.5rem;
+    }
+
+    .student-card {
+      background: white;
+      border-radius: 1.5rem;
+      padding: 1.2rem 1.4rem;
+      transition: all 0.25s ease;
+      box-shadow: 0 12px 22px -12px rgba(0, 0, 0, 0.08);
+      border: 1px solid rgba(0, 0, 0, 0.03);
+      backdrop-filter: blur(2px);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .student-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 28px -12px rgba(0, 0, 0, 0.15);
+      border-color: #cddcff;
+    }
+
+    .student-info {
+      flex: 2;
+    }
+
+    .student-name {
+      font-size: 1.3rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #1f2b48, #2d3e62);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      letter-spacing: -0.2px;
+      margin-bottom: 6px;
+    }
+
+    .student-details {
+      margin-top: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      row-gap: 8px;
+    }
+
+    .badge {
+      background: #ecfdf3;
+      padding: 4px 12px;
+      border-radius: 30px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #0e6b3a;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .badge-dept {
+      background: #eef2ff;
+      color: #2c3e66;
+    }
+
+    .badge-parent {
+      background: #fff3e0;
+      color: #b45309;
+    }
+
+    .badge-percent {
+      background: linear-gradient(135deg, #d9f0ec, #c8e6df);
+      color: #0a5e3a;
+      font-weight: 700;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .icon-btn {
+      background: transparent;
+      border: none;
+      font-size: 1.3rem;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 50%;
+      transition: 0.15s;
+      width: 38px;
+      height: 38px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .icon-btn.delete {
+      color: #b91c1c;
+    }
+
+    .icon-btn.delete:hover {
+      background: #fee2e2;
+      transform: scale(1.05);
+    }
+
+    .icon-btn.edit {
+      color: #2c6280;
+    }
+
+    .icon-btn.edit:hover {
+      background: #e6f0ff;
+      transform: scale(1.05);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      background: rgba(255,255,240,0.6);
+      border-radius: 2rem;
+      color: #4b5563;
+      font-weight: 500;
+    }
+
+    .stats {
+      margin-top: 18px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      background: #eef2ff80;
+      display: inline-block;
+      padding: 5px 18px;
+      border-radius: 40px;
+      color: #1e293b;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 2rem;
+      font-size: 0.75rem;
+      color: #4a627a;
+    }
+
+    @media (max-width: 680px) {
+      body {
+        padding: 1rem;
+      }
+      .student-grid {
+        grid-template-columns: 1fr;
+      }
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+      .btn-save {
+        width: 100%;
+      }
+      .hero {
+        padding: 1.2rem;
+      }
+      h1 {
+        font-size: 1.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="dashboard">
+  <div class="hero">
+    <h1>
+      <span>🎓</span> EduTrack Pro
+    </h1>
+    <div class="subhead">Smart student management • Dynamic department & course selection</div>
+  </div>
+
+  <!-- SEARCH + ACTIONS PANEL -->
+  <div class="card-panel">
+    <div class="search-section">
+      <div class="search-wrapper">
+        <span style="position: absolute; left: 18px; top: 50%; transform: translateY(-50%); font-size: 1.1rem;">🔍</span>
+        <input type="text" id="search" class="search-input" placeholder="Search by name, department, course...">
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-primary" id="searchBtn">🔎 Search</button>
+        <button class="btn btn-outline" id="showAllBtn">📋 Show All</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- UPDATED FORM with Department & Course Dropdowns -->
+  <div class="card-panel" style="background: rgba(255, 255, 255, 0.85);">
+    <form id="studentForm">
+      <div class="form-grid">
+        <div class="input-field">
+          <label>📛 STUDENT NAME *</label>
+          <input type="text" id="name" class="modern-input" placeholder="Enter full name" required>
+        </div>
+        <div class="input-field">
+          <label>👨 FATHER'S NAME</label>
+          <input type="text" id="father_name" class="modern-input" placeholder="Father's full name">
+        </div>
+        <div class="input-field">
+          <label>👩 MOTHER'S NAME</label>
+          <input type="text" id="mother_name" class="modern-input" placeholder="Mother's full name">
+        </div>
+        <div class="input-field">
+          <label>📊 PERCENTAGE (%)</label>
+          <input type="number" id="percentage" class="modern-input" placeholder="85.5" step="0.01">
+        </div>
+        <div class="input-field">
+          <label>🏛️ DEPARTMENT *</label>
+          <select id="department" class="modern-select" required>
+            <option value="">-- Select Department --</option>
+          </select>
+        </div>
+        <div class="input-field">
+          <label>📚 COURSE *</label>
+          <select id="course" class="modern-select" required>
+            <option value="">-- Select Course --</option>
+          </select>
+        </div>
+        <div class="input-field">
+          <button type="submit" class="btn-save" id="saveBtn">💾 Save Student</button>
+        </div>
+      </div>
+      <input type="hidden" id="editId" value="">
+    </form>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; flex-wrap: wrap;">
+      <div class="stats" id="statsDisplay">🎓 loading students...</div>
+      <div style="font-size: 0.7rem; color:#5a6e8a;">✨ Dynamic dropdowns • Edit or delete records</div>
+    </div>
+  </div>
+
+  <!-- STUDENT CARDS GRID -->
+  <div id="listContainer">
+    <ul id="list" style="list-style: none; padding: 0;"></ul>
+  </div>
+  <footer>⚡ Real-time storage • Department and course selections update dynamically</footer>
+</div>
+
+<script>
+  // ---------- MASTER DATA FOR DROPDOWNS ----------
+  const departmentsData = [
+    "Computer Science & Engineering",
+    "Electronics & Communication",
+    "Mechanical Engineering",
+    "Civil Engineering",
+    "Electrical Engineering",
+    "Business Administration",
+    "Data Science & Analytics",
+    "Graphic Design",
+    "Biotechnology",
+    "Physics",
+    "Mathematics"
+  ];
+
+  // Course data mapped to departments (for dynamic filtering)
+  const coursesData = {
+    "Computer Science & Engineering": [
+      "B.Tech CSE",
+      "M.Tech CSE",
+      "BCA",
+      "MCA",
+      "Ph.D in CSE"
+    ],
+    "Electronics & Communication": [
+      "B.Tech ECE",
+      "M.Tech ECE",
+      "Diploma in ECE"
+    ],
+    "Mechanical Engineering": [
+      "B.Tech Mechanical",
+      "M.Tech Mechanical",
+      "Diploma in Mechanical"
+    ],
+    "Civil Engineering": [
+      "B.Tech Civil",
+      "M.Tech Civil",
+      "Diploma in Civil"
+    ],
+    "Electrical Engineering": [
+      "B.Tech Electrical",
+      "M.Tech Electrical",
+      "Diploma in Electrical"
+    ],
+    "Business Administration": [
+      "BBA",
+      "MBA",
+      "Executive MBA"
+    ],
+    "Data Science & Analytics": [
+      "B.Sc Data Science",
+      "M.Sc Data Science",
+      "PG Diploma in Data Analytics"
+    ],
+    "Graphic Design": [
+      "B.Des Graphic Design",
+      "M.Des Visual Communication",
+      "Certificate in UI/UX"
+    ],
+    "Biotechnology": [
+      "B.Sc Biotechnology",
+      "M.Sc Biotechnology",
+      "B.Tech Biotech"
+    ],
+    "Physics": [
+      "B.Sc Physics",
+      "M.Sc Physics",
+      "Integrated M.Sc Physics"
+    ],
+    "Mathematics": [
+      "B.Sc Mathematics",
+      "M.Sc Mathematics",
+      "B.Ed Mathematics"
+    ]
+  };
+
+  let students = [];
+
+  // Populate department dropdown
+  function populateDepartments() {
+    const deptSelect = document.getElementById('department');
+    deptSelect.innerHTML = '<option value="">-- Select Department --</option>';
+    departmentsData.forEach(dept => {
+      const option = document.createElement('option');
+      option.value = dept;
+      option.textContent = dept;
+      deptSelect.appendChild(option);
+    });
+  }
+
+  // Populate courses based on selected department
+  function updateCoursesDropdown(selectedDept, selectedCourseValue = '') {
+    const courseSelect = document.getElementById('course');
+    courseSelect.innerHTML = '<option value="">-- Select Course --</option>';
+    
+    if (selectedDept && coursesData[selectedDept]) {
+      coursesData[selectedDept].forEach(course => {
+        const option = document.createElement('option');
+        option.value = course;
+        option.textContent = course;
+        courseSelect.appendChild(option);
+      });
+      
+      // If we have a preselected course value (for editing), set it
+      if (selectedCourseValue && coursesData[selectedDept].includes(selectedCourseValue)) {
+        courseSelect.value = selectedCourseValue;
+      }
+    }
+  }
+
+  // Load from localStorage or create sample data
+  function loadFromStorage() {
+    const stored = localStorage.getItem('edutrack_pro_dynamic');
+    if(stored) {
+      students = JSON.parse(stored);
+    } else {
+      // sample students with department & course
+      students = [
+        { 
+          id: '1', name: 'Olivia Chen', father_name: 'Wei Chen', mother_name: 'Mei Lin',
+          percentage: 92.4, department: 'Computer Science & Engineering', course: 'B.Tech CSE'
+        },
+        { 
+          id: '2', name: 'Marcus Rivera', father_name: 'Carlos Rivera', mother_name: 'Elena Rivera',
+          percentage: 87.2, department: 'Data Science & Analytics', course: 'B.Sc Data Science'
+        },
+        { 
+          id: '3', name: 'Sophia Laurent', father_name: 'Jean Laurent', mother_name: 'Claire Laurent',
+          percentage: 91.0, department: 'Graphic Design', course: 'B.Des Graphic Design'
+        },
+        { 
+          id: '4', name: 'James Okafor', father_name: 'Chidi Okafor', mother_name: 'Ngozi Okafor',
+          percentage: 88.5, department: 'Business Administration', course: 'MBA'
+        },
+        { 
+          id: '5', name: 'Aarav Sharma', father_name: 'Rajesh Sharma', mother_name: 'Neha Sharma',
+          percentage: 95.2, department: 'Electronics & Communication', course: 'B.Tech ECE'
+        }
+      ];
+      saveToStorage();
+    }
+    renderStudentList();
+  }
+
+  function saveToStorage() {
+    localStorage.setItem('edutrack_pro_dynamic', JSON.stringify(students));
+  }
+
+  function generateId() {
+    return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+  }
+
+  function updateStats(count) {
+    const statsDiv = document.getElementById('statsDisplay');
+    if(statsDiv) {
+      const total = students.length;
+      statsDiv.innerHTML = `🎓 ${total} registered student${total !== 1 ? 's' : ''} • showing ${count} result${count !== 1 ? 's' : ''}`;
+    }
+  }
+
+  // Render student cards
+  function renderStudentList(filteredStudents = null) {
+    const container = document.getElementById('list');
+    if(!container) return;
+
+    const dataToRender = filteredStudents !== null ? filteredStudents : [...students];
+    updateStats(dataToRender.length);
+
+    if(dataToRender.length === 0) {
+      container.innerHTML = `<div class="empty-state">
+        <div style="font-size: 3rem; margin-bottom: 10px;">📭</div>
+        <div style="font-size: 1.2rem; font-weight: 500;">No students found</div>
+        <div style="margin-top: 8px;">Add a new student with department & course details ✨</div>
+      </div>`;
+      return;
+    }
+
+    const gridDiv = document.createElement('div');
+    gridDiv.className = 'student-grid';
+
+    dataToRender.forEach(student => {
+      const card = document.createElement('div');
+      card.className = 'student-card';
+
+      const infoDiv = document.createElement('div');
+      infoDiv.className = 'student-info';
+
+      const nameSpan = document.createElement('div');
+      nameSpan.className = 'student-name';
+      nameSpan.innerText = student.name || 'Unnamed';
+
+      const detailsContainer = document.createElement('div');
+      detailsContainer.className = 'student-details';
+
+      // Department badge
+      if(student.department) {
+        const deptBadge = document.createElement('span');
+        deptBadge.className = 'badge badge-dept';
+        deptBadge.innerHTML = `🏢 ${student.department}`;
+        detailsContainer.appendChild(deptBadge);
+      }
+
+      // Course badge
+      if(student.course) {
+        const courseBadge = document.createElement('span');
+        courseBadge.className = 'badge';
+        courseBadge.innerHTML = `📘 ${student.course}`;
+        detailsContainer.appendChild(courseBadge);
+      }
+
+      // Father & Mother names
+      if(student.father_name) {
+        const fatherBadge = document.createElement('span');
+        fatherBadge.className = 'badge badge-parent';
+        fatherBadge.innerHTML = `👨 ${student.father_name}`;
+        detailsContainer.appendChild(fatherBadge);
+      }
+      if(student.mother_name) {
+        const motherBadge = document.createElement('span');
+        motherBadge.className = 'badge badge-parent';
+        motherBadge.innerHTML = `👩 ${student.mother_name}`;
+        detailsContainer.appendChild(motherBadge);
+      }
+
+      // Percentage badge
+      if(student.percentage !== null && student.percentage !== undefined && student.percentage !== '') {
+        const percentVal = parseFloat(student.percentage);
+        const percentBadge = document.createElement('span');
+        percentBadge.className = 'badge badge-percent';
+        let emoji = percentVal >= 90 ? '🏆' : (percentVal >= 75 ? '📈' : '📊');
+        percentBadge.innerHTML = `${emoji} ${percentVal}%`;
+        detailsContainer.appendChild(percentBadge);
+      }
+
+      infoDiv.appendChild(nameSpan);
+      infoDiv.appendChild(detailsContainer);
+
+      const actionsDiv = document.createElement('div');
+      actionsDiv.className = 'card-actions';
+
+      const editBtn = document.createElement('button');
+      editBtn.innerHTML = '✏️';
+      editBtn.className = 'icon-btn edit';
+      editBtn.title = 'Edit student';
+      editBtn.onclick = (e) => {
+        e.stopPropagation();
+        populateFormForEdit(student);
+      };
+
+      const deleteBtn = document.createElement('button');
+      deleteBtn.innerHTML = '🗑️';
+      deleteBtn.className = 'icon-btn delete';
+      deleteBtn.title = 'Delete student';
+      deleteBtn.onclick = (e) => {
+        e.stopPropagation();
+        if(confirm(`Delete "${student.name}" from records?`)) {
+          deleteStudentById(student.id);
+        }
+      };
+
+      actionsDiv.appendChild(editBtn);
+      actionsDiv.appendChild(deleteBtn);
+      card.appendChild(infoDiv);
+      card.appendChild(actionsDiv);
+      gridDiv.appendChild(card);
+    });
+
+    container.innerHTML = '';
+    container.appendChild(gridDiv);
+  }
+
+  function deleteStudentById(id) {
+    students = students.filter(s => s.id !== id);
+    saveToStorage();
+    document.getElementById('search').value = '';
+    renderStudentList();
+  }
+
+  function populateFormForEdit(student) {
+    document.getElementById('name').value = student.name || '';
+    document.getElementById('father_name').value = student.father_name || '';
+    document.getElementById('mother_name').value = student.mother_name || '';
+    document.getElementById('percentage').value = student.percentage !== undefined && student.percentage !== null ? student.percentage : '';
+    
+    // Set department and trigger course update
+    const deptSelect = document.getElementById('department');
+    deptSelect.value = student.department || '';
+    
+    // Update courses dropdown based on selected department
+    updateCoursesDropdown(student.department, student.course || '');
+    
+    document.getElementById('editId').value = student.id;
+    
+    const saveBtn = document.getElementById('saveBtn');
+    saveBtn.innerHTML = '✏️ Update Student';
+    saveBtn.style.background = "linear-gradient(120deg, #e68a2e, #c45f1b)";
+    document.querySelector('.card-panel').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function resetForm() {
+    document.getElementById('studentForm').reset();
+    document.getElementById('editId').value = '';
+    // Reset dropdowns
+    document.getElementById('department').value = '';
+    updateCoursesDropdown('', '');
+    const saveBtn = document.getElementById('saveBtn');
+    saveBtn.innerHTML = '💾 Save Student';
+    saveBtn.style.background = "linear-gradient(120deg, #1f8a4c, #0e6b3a)";
+  }
+
+  function saveStudent(event) {
+    event.preventDefault();
+    const name = document.getElementById('name').value.trim();
+    const father_name = document.getElementById('father_name').value.trim();
+    const mother_name = document.getElementById('mother_name').value.trim();
+    let percentage = document.getElementById('percentage').value;
+    const department = document.getElementById('department').value;
+    const course = document.getElementById('course').value;
+    const editId = document.getElementById('editId').value;
+
+    if(!name) {
+      alert("Please provide student name");
+      return;
+    }
+    
+    if(!department) {
+      alert("Please select a department");
+      return;
+    }
+    
+    if(!course) {
+      alert("Please select a course");
+      return;
+    }
+
+    let parsedPercentage = null;
+    if(percentage !== null && percentage !== undefined && percentage !== '') {
+      parsedPercentage = parseFloat(percentage);
+      if(isNaN(parsedPercentage)) parsedPercentage = null;
+    }
+
+    if(editId) {
+      const index = students.findIndex(s => s.id === editId);
+      if(index !== -1) {
+        students[index] = {
+          ...students[index],
+          name, father_name, mother_name, percentage: parsedPercentage, department, course,
+        };
+      }
+    } else {
+      const newStudent = {
+        id: generateId(),
+        name, father_name, mother_name, percentage: parsedPercentage, department, course,
+      };
+      students.push(newStudent);
+    }
+
+    saveToStorage();
+    resetForm();
+    document.getElementById('search').value = '';
+    renderStudentList();
+  }
+
+  function searchStudents() {
+    const query = document.getElementById('search').value.trim().toLowerCase();
+    if(query === "") {
+      renderStudentList();
+      return;
+    }
+    const filtered = students.filter(student => {
+      return (
+        student.name.toLowerCase().includes(query) ||
+        (student.department && student.department.toLowerCase().includes(query)) ||
+        (student.course && student.course.toLowerCase().includes(query)) ||
+        (student.father_name && student.father_name.toLowerCase().includes(query)) ||
+        (student.mother_name && student.mother_name.toLowerCase().includes(query))
+      );
+    });
+    renderStudentList(filtered);
+  }
+
+  function showAllStudents() {
+    document.getElementById('search').value = '';
+    renderStudentList();
+  }
+
+  // Initialize dropdown event listener
+  function initDropdownEvents() {
+    const deptSelect = document.getElementById('department');
+    deptSelect.addEventListener('change', function() {
+      updateCoursesDropdown(this.value, '');
+    });
+  }
+
+  function init() {
+    populateDepartments();
+    initDropdownEvents();
+    loadFromStorage();
+    
+    const form = document.getElementById('studentForm');
+    form.addEventListener('submit', saveStudent);
+    
+    const searchBtn = document.getElementById('searchBtn');
+    const showAllBtn = document.getElementById('showAllBtn');
+    const searchInput = document.getElementById('search');
+    
+    if(searchBtn) searchBtn.addEventListener('click', searchStudents);
+    if(showAllBtn) showAllBtn.addEventListener('click', showAllStudents);
+    if(searchInput) {
+      searchInput.addEventListener('keyup', (e) => {
+        if(e.key === 'Enter') searchStudents();
+      });
+    }
+  }
+
+  init();
+</script>
+</body>
+</html>
